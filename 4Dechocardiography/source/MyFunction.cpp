@@ -3510,10 +3510,193 @@ void locationEstimation_valve2(vector<vector<int>> &timing, vector<PointCloud<Po
 			C_AorticValve.z = C_Aorta1.z - T*unit_vector.z;
 		}
 	}
-	
+
 	printf("C_MitralValve     x : %f  y : %f  z : %f\n", C_MitralValve.x, C_MitralValve.y, C_MitralValve.z);
 	printf("C_AorticValve     x : %f  y : %f  z : %f\n", C_AorticValve.x, C_AorticValve.y, C_AorticValve.z);
 
+
+
+	//set cuboid of mitralValve
+	for (size_t f = 0; f < cloud.size(); f++) {
+		if (timing[f][0] == 1 && timing[f][1] == 2) {
+			for (size_t n = 0; n < cloud[f]->size(); n++) {
+				if ((C_MitralValve.x - l / 2.0 < cloud[f]->points[n].x&&cloud[f]->points[n].x < C_MitralValve.x + l / 2.0) && (C_MitralValve.y - l / 2.0 < cloud[f]->points[n].y&&cloud[f]->points[n].y < C_MitralValve.y + l / 2.0) && (C_MitralValve.z - l / 2.0 < cloud[f]->points[n].z&&cloud[f]->points[n].z < C_MitralValve.z + l / 2.0)) {
+					PointXYZRGB p;
+					p.x = cloud[f]->points[n].x;
+					p.y = cloud[f]->points[n].y;
+					p.z = cloud[f]->points[n].z;
+					p.r = cloud[f]->points[n].r;
+					p.g = cloud[f]->points[n].g;
+					p.b = cloud[f]->points[n].b;
+					for (size_t F = 0; F < cloud.size(); F++) {
+						cloud_MitralValve[F]->push_back(p);
+					}
+				}
+			}
+
+		}
+		//cloud_MitralValve[f]->push_back(C_MitralValve);
+		//cerr << "cloud_MitralValve[" << f << "]->size() : " << cloud_MitralValve[f]->size() << endl;
+	}
+	//set cuboid of aorticValve
+	for (size_t f = 0; f < cloud.size(); f++) {
+		if (timing[f][0] == 1 && timing[f][1] == 2) {
+			for (size_t n = 0; n < cloud[f]->size(); n++) {
+				if ((C_AorticValve.x - l / 2.0 < cloud[f]->points[n].x&&cloud[f]->points[n].x < C_AorticValve.x + l / 2.0) && (C_AorticValve.y - l / 2.0 < cloud[f]->points[n].y&&cloud[f]->points[n].y < C_AorticValve.y + l / 2.0) && (C_AorticValve.z - l / 2.0 < cloud[f]->points[n].z&&cloud[f]->points[n].z < C_AorticValve.z + l / 2.0)) {
+					PointXYZRGB p;
+					p.x = cloud[f]->points[n].x;
+					p.y = cloud[f]->points[n].y;
+					p.z = cloud[f]->points[n].z;
+					p.r = cloud[f]->points[n].r;
+					p.g = cloud[f]->points[n].g;
+					p.b = cloud[f]->points[n].b;
+					cloud_AorticValve[f]->push_back(p);
+					for (size_t F = 0; F < cloud.size(); F++) {
+						cloud_AorticValve[F]->push_back(p);
+					}
+				}
+			}
+
+		}
+		//cloud_AorticValve[f]->push_back(C_AorticValve);
+		//cerr << "cloud_AorticValve[" << f << "]->size() : " << cloud_AorticValve[f]->size() << endl;
+	}
+
+	for (size_t f = 0; f < cloud.size(); f++) {
+		cloud_MitralValve[f]->push_back(C_MitralValve);
+		cloud_AorticValve[f]->push_back(C_AorticValve);
+	}
+}
+
+void locationEstimation_valve3(vector<vector<int>> &timing, vector<PointCloud<PointXYZRGB>::Ptr> cloud_blood_clustered, vector<PointCloud<PointXYZRGB>::Ptr> cloud, vector<PointCloud<PointXYZRGB>::Ptr> &cloud_MitralValve, vector<PointCloud<PointXYZRGB>::Ptr> &cloud_AorticValve)
+{
+	// set Centroids of each of cluster
+	int index_centroid_Ventricle = cloud_blood_clustered[0]->size() - 1;
+	int index_centroid_Atrium = cloud_blood_clustered[1]->size() - 1;
+	int index_centroid_Aorta1, index_centroid_Aorta2;
+	index_centroid_Aorta1 = cloud_blood_clustered[2]->size() - 1;
+	PointXYZ p1, p2, p3, p4;
+	p1.x = cloud_blood_clustered[0]->points[index_centroid_Ventricle].x;
+	p1.y = cloud_blood_clustered[0]->points[index_centroid_Ventricle].y;
+	p1.z = cloud_blood_clustered[0]->points[index_centroid_Ventricle].z;
+	p2.x = cloud_blood_clustered[1]->points[index_centroid_Atrium].x;
+	p2.y = cloud_blood_clustered[1]->points[index_centroid_Atrium].y;
+	p2.z = cloud_blood_clustered[1]->points[index_centroid_Atrium].z;
+	p3.x = cloud_blood_clustered[2]->points[index_centroid_Aorta1].x;
+	p3.y = cloud_blood_clustered[2]->points[index_centroid_Aorta1].y;
+	p3.z = cloud_blood_clustered[2]->points[index_centroid_Aorta1].z;
+	//Aorta2 presence or not
+	if (cloud_blood_clustered.size() == 4) {
+		index_centroid_Aorta2 = cloud_blood_clustered[3]->size() - 1;
+		p4.x = cloud_blood_clustered[3]->points[index_centroid_Aorta2].x;
+		p4.y = cloud_blood_clustered[3]->points[index_centroid_Aorta2].y;
+		p4.z = cloud_blood_clustered[3]->points[index_centroid_Aorta2].z;
+	}
+	else if (cloud_blood_clustered.size() == 3)
+	{
+		index_centroid_Aorta2 = 0;
+		p4.x = 0;
+		p4.y = 0;
+		p4.z = 0;
+	}
+
+	//set centroids of valves
+	//the centroid of mitralval is the place of where the distances from the two nearst elements of each cluster is same
+	float l = levs*0.4f;
+	PointXYZ p01;
+	PointXYZ v1;
+	PointXYZRGB C_MitralValve;
+	C_MitralValve.r = 255; C_MitralValve.g = 0; C_MitralValve.b = 0;
+
+	float min_distance_Ventricle = (float)levs;
+	int min_index_Ventricle = 0;
+	for (size_t i = 0; i < cloud_blood_clustered[0]->size(); i++) {
+		float distance = sqrt(pow((cloud_blood_clustered[0]->points[i].x - p2.x), 2) + pow((cloud_blood_clustered[0]->points[i].y - p2.y), 2) + pow((cloud_blood_clustered[0]->points[i].z - p2.z), 2));
+		if (min_distance_Ventricle > distance) {
+			min_distance_Ventricle = distance;
+			min_index_Ventricle = i;
+		}
+	}
+
+	float min_distance_Atrium = (float)levs;
+	int min_index_Atrium = 0;
+	for (size_t i = 0; i < cloud_blood_clustered[1]->size(); i++) {
+		float distance = sqrt(pow((cloud_blood_clustered[1]->points[i].x - p1.x), 2) + pow((cloud_blood_clustered[1]->points[i].y - p1.y), 2) + pow((cloud_blood_clustered[1]->points[i].z - p1.z), 2));
+		if (min_distance_Atrium > distance) {
+			min_distance_Atrium = distance;
+			min_index_Atrium = i;
+		}
+	}
+
+	p01.x = (cloud_blood_clustered[0]->points[min_index_Ventricle].x + cloud_blood_clustered[1]->points[min_index_Atrium].x) / 2.0;
+	p01.y = (cloud_blood_clustered[0]->points[min_index_Ventricle].y + cloud_blood_clustered[1]->points[min_index_Atrium].y) / 2.0;
+	p01.z = (cloud_blood_clustered[0]->points[min_index_Ventricle].z + cloud_blood_clustered[1]->points[min_index_Atrium].z) / 2.0;
+
+	v1.x = p1.x - p2.x;//a
+	v1.y = p1.y - p2.y;//b
+	v1.z = p1.z - p2.z;//c
+
+	C_MitralValve.x = (pow(v1.x, 2)*p01.x + (pow(v1.y, 2) + pow(v1.z, 2))*p1.x + (p01.y - p1.y)*v1.x*v1.y + (p01.z - p1.z)*v1.z*v1.x) / (pow(v1.x, 2) + pow(v1.y, 2) + pow(v1.z, 2));
+	C_MitralValve.y = (pow(v1.y, 2)*p01.y + (pow(v1.z, 2) + pow(v1.x, 2))*p1.y + (p01.x - p1.x)*v1.x*v1.y + (p01.z - p1.z)*v1.y*v1.z) / (pow(v1.x, 2) + pow(v1.y, 2) + pow(v1.z, 2));
+	C_MitralValve.z = (pow(v1.z, 2)*p01.z + (pow(v1.x, 2) + pow(v1.y, 2))*p1.z + (p01.x - p1.x)*v1.z*v1.x + (p01.y - p1.y)*v1.y*v1.z) / (pow(v1.x, 2) + pow(v1.y, 2) + pow(v1.z, 2));
+
+
+	PointXYZ p02;
+	PointXYZ v2;
+	PointXYZRGB C_AorticValve;
+	C_AorticValve.r = 0; C_AorticValve.g = 255; C_AorticValve.b = 0;
+
+	/*float min_distance_Aorta1 = (float)levs;
+	int min_index_Ventricle = 0;
+	for (size_t i = 0; i < cloud_blood_clustered[0]->size(); i++) {
+		float distance = sqrt(pow((cloud_blood_clustered[0]->points[i].x - p2.x), 2) + pow((cloud_blood_clustered[0]->points[i].y - p2.y), 2) + pow((cloud_blood_clustered[0]->points[i].z - p2.z), 2));
+		if (min_distance_Ventricle > distance) {
+			min_distance_Ventricle = distance;
+			min_index_Ventricle = i;
+		}
+	}
+
+	float min_distance_Atrium = (float)levs;
+	int min_index_Atrium = 0;
+	for (size_t i = 0; i < cloud_blood_clustered[1]->size(); i++) {
+		float distance = sqrt(pow((cloud_blood_clustered[1]->points[i].x - p1.x), 2) + pow((cloud_blood_clustered[1]->points[i].y - p1.y), 2) + pow((cloud_blood_clustered[1]->points[i].z - p1.z), 2));
+		if (min_distance_Atrium > distance) {
+			min_distance_Atrium = distance;
+			min_index_Atrium = i;
+		}
+	}
+
+	p01.x = (cloud_blood_clustered[0]->points[min_index_Ventricle].x + cloud_blood_clustered[1]->points[min_index_Atrium].x) / 2.0;
+	p01.y = (cloud_blood_clustered[0]->points[min_index_Ventricle].y + cloud_blood_clustered[1]->points[min_index_Atrium].y) / 2.0;
+	p01.z = (cloud_blood_clustered[0]->points[min_index_Ventricle].z + cloud_blood_clustered[1]->points[min_index_Atrium].z) / 2.0;*/
+
+	if (cloud_blood_clustered.size() == 4) {
+		C_AorticValve.x = (p3.x + p4.x) / 2.0;
+		C_AorticValve.y = (p3.y + p4.y) / 2.0;
+		C_AorticValve.z = (p3.z + p4.z) / 2.0;
+	}
+	else if (cloud_blood_clustered.size() == 3) {
+		float l_LVtoLA = sqrt(pow((p1.x - p2.x), 2) + pow((p1.y - p2.y), 2) + pow((p1.z - p2.z), 2));
+		float l_LVtoAR = sqrt(pow((p1.x - p3.x), 2) + pow((p1.y - p3.y), 2) + pow((p1.z - p3.z), 2));
+		PointXYZ unit_vector;
+		float T = 13.0;
+		unit_vector.x = (p3.x - p1.x) / l_LVtoAR;
+		unit_vector.y = (p3.y - p1.y) / l_LVtoAR;
+		unit_vector.z = (p3.z - p1.z) / l_LVtoAR;
+		if (l_LVtoLA > l_LVtoAR) {
+			C_AorticValve.x = p3.x + T*unit_vector.x;
+			C_AorticValve.y = p3.y + T*unit_vector.y;
+			C_AorticValve.z = p3.z + T*unit_vector.z;
+		}
+		else {
+			C_AorticValve.x = p3.x - T*unit_vector.x;
+			C_AorticValve.y = p3.y - T*unit_vector.y;
+			C_AorticValve.z = p3.z - T*unit_vector.z;
+		}
+	}
+
+	printf("C_MitralValve     x : %f  y : %f  z : %f\n", C_MitralValve.x, C_MitralValve.y, C_MitralValve.z);
+	printf("C_AorticValve     x : %f  y : %f  z : %f\n", C_AorticValve.x, C_AorticValve.y, C_AorticValve.z);
 
 
 	//set cuboid of mitralValve

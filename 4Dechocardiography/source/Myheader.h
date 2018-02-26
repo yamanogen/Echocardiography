@@ -90,6 +90,7 @@
 #define timesV 0.5
 #define div1 4
 #define div2 8
+#define div3 1
 //divをそれぞれのクラスタリングで決定できるようソースコード変更
 //ベクトルの検出精度向上のための３次元特徴量選出
 
@@ -236,6 +237,7 @@ void bilateralFiltering(PointCloud<PointXYZRGB>::Ptr cloud, PointCloud<PointXYZR
 void outerProductFromNormal(PointCloud<PointNormal>::Ptr cloud_PointNormal, int X, int Y, int Z, PointCloud<PointXYZRGB>::Ptr &cloud_info, PointCloud<Normal>::Ptr &cloud_Normal_info, PointCloud<PointNormal>::Ptr &cloud_PointNormal_ave_info);
 void locationEstimation_valve(vector<vector<int>> &timing, vector<PointCloud<PointXYZRGB>::Ptr> cloud_blood_clustered, vector<PointCloud<PointXYZRGB>::Ptr> cloud_Ventricle, vector<PointCloud<PointXYZRGB>::Ptr> cloud_Atrium, vector<PointCloud<PointXYZRGB>::Ptr> cloud_Aorta, vector<PointCloud<PointXYZRGB>::Ptr> cloud, vector<PointCloud<PointXYZRGB>::Ptr> &cloud_MitralValve, vector<PointCloud<PointXYZRGB>::Ptr> &cloud_AorticValve);
 void locationEstimation_valve2(vector<vector<int>> &timing, vector<PointCloud<PointXYZRGB>::Ptr> cloud_blood_clustered, vector<PointCloud<PointXYZRGB>::Ptr> cloud, vector<PointCloud<PointXYZRGB>::Ptr> &cloud_MitralValve, vector<PointCloud<PointXYZRGB>::Ptr> &cloud_AorticValve);
+void locationEstimation_valve3(vector<vector<int>> &timing, vector<PointCloud<PointXYZRGB>::Ptr> cloud_blood_clustered, vector<PointCloud<PointXYZRGB>::Ptr> cloud, vector<PointCloud<PointXYZRGB>::Ptr> &cloud_MitralValve, vector<PointCloud<PointXYZRGB>::Ptr> &cloud_AorticValve);
 void CSVoutMitralValveCentroid(PointCloud<PointXYZRGB>::Ptr Mitral_Valve, int filenumber, int fileindex);
 void CSVoutAorticValveCentroid(PointCloud<PointXYZRGB>::Ptr Aortic_Valve, int filenumber, int fileindex);
 void averagePointCloud(vector<PointCloud<PointXYZRGB>::Ptr> cloud, PointCloud<PointXYZRGBA>::Ptr &cloud_ave);
