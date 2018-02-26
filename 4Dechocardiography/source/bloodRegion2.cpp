@@ -13,7 +13,7 @@ int main(void)
 	DcmDataset *dataset;
 	DcmElement *element;
 	Uint8 *pixeldata;
-	int data_number = 13; int data_index = 1;
+	int data_number = 7; int data_index = 1;
 	int blood_outlier = 2;
 	bool Blood_cluster_(true);
 	bool Blood_cluster_after_(true);
@@ -23,7 +23,7 @@ int main(void)
 	
 	
 
-	if (dcmfile.loadFile(DCMfilenameTest13_6).bad()) {
+	if (dcmfile.loadFile(DCMfilenameTest7_1).bad()) {
 		printf("DcmFileFormat:loadFile() failed.\n");
 		return 1;
 	}
@@ -194,11 +194,9 @@ int main(void)
 	}
 
 	if (Valve_Location_) {
-		locationEstimation_valve2(timing, cloud_clustered_after[0], cloud, cloud_MitralValve, cloud_AorticValve);
-/*--------------------------------------------------------------------------------------*/
+		locationEstimation_valve3(timing, cloud_clustered_after[0], cloud, cloud_MitralValve, cloud_AorticValve);
 		CSVoutMitralValveCentroid(cloud_MitralValve[0], data_number, data_index);
 		CSVoutAorticValveCentroid(cloud_AorticValve[0], data_number, data_index);
-/*--------------------------------------------------------------------------------------*/
 		/*int index_MitralValve = cloud_MitralValve[0]->size() - 1;
 		printf("cloud_MitralValve  x : %f  y : %f  z : %f\n", cloud_MitralValve[0]->points[index_MitralValve].x, cloud_MitralValve[0]->points[index_MitralValve].y, cloud_MitralValve[0]->points[index_MitralValve].z);
 		int index_AorticValve = cloud_AorticValve[0]->size() - 1;
